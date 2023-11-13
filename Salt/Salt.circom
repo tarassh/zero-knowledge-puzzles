@@ -15,8 +15,18 @@ pragma circom 2.1.4;
 // Hash all 3 using mimcsponge as a hashing mechanism. 
 // Output the res using 'out'.
 
+include "../node_modules/circomlib/circuits/mimcsponge.circom";
+
 template Salt() {
-    // Your code here..
+    signal input a;
+    signal input b;
+    signal input salt;
+
+    component sponge = MiMCSponge(2, 220, 1);
+    sponge.ins <== [a, b];
+    sponge.k <== salt;
+
+    signal output out <== sponge.outs[0];
 }
 
 component main  = Salt();

@@ -7,10 +7,13 @@ pragma circom 2.1.4;
 // Declare 3 input signals `a`, `lowerbound` and `upperbound`.
 // If 'a' is within the range, output 1 , else output 0 using 'out'
 
+include "../node_modules/circomlib/circuits/comparators.circom";
 
 template Range() {
-    // your code here
-   
+    signal input a;
+    signal input lowerbound;
+    signal input upperbound;
+    signal output out <== LessEqThan(8)([0, (a - lowerbound) * (upperbound - a)]);
 }
 
 component main  = Range();

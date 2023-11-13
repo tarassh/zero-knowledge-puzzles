@@ -22,7 +22,7 @@ include "../node_modules/circomlib/circuits/comparators.circom";
 
 template Sudoku () {
     // Question Setup 
-    signal input  question[16];
+    signal input question[16];
     signal input solution[16];
     signal output out;
     
@@ -73,9 +73,32 @@ template Sudoku () {
     3 === row4[3].out + row4[2].out + row4[1].out + row4[0].out; 
 
     // Write your solution from here.. Good Luck!
-    
-    
-   
+    var LEN = 4;
+    var ACC = 5;
+    signal x[ACC*LEN];
+    signal y[ACC*LEN];
+    var j;
+    for (var i = 0; i < LEN; i++) {
+        x[i*LEN+i] <== 1;
+        y[i*LEN+i] <== 1;
+
+        j = i*LEN+i+1;
+        while (j < (i+1)*LEN+i+1) {
+            var index = j - i*LEN - i;
+            var ix = i*LEN+index-1;
+            var iy = (index-1) * LEN + i;
+
+            x[j] <== x[j-1] * solution[ix] / index;
+            y[j] <== y[j-1] * solution[iy] / index;
+            j++;
+        }
+    }
+
+    // Take every 5th element and add them together without using a for loop
+    var a = x[ACC-1] + x[2*ACC-1] + x[3*ACC-1] + x[4*ACC-1];
+    var b = y[ACC-1] + y[2*ACC-1] + y[3*ACC-1] + y[4*ACC-1];
+
+    out <== IsEqual()([a+b, LEN*2]);
 }
 
 
