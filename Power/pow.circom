@@ -29,4 +29,3 @@ template Pow(BITS) {
 }
 
 component main = Pow(8);
-

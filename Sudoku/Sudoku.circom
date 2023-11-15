@@ -77,28 +77,33 @@ template Sudoku () {
     var ACC = 5;
     signal x[ACC*LEN];
     signal y[ACC*LEN];
-    var j;
+    component is_one[2*LEN];
+    var result = 0;
     for (var i = 0; i < LEN; i++) {
         x[i*LEN+i] <== 1;
         y[i*LEN+i] <== 1;
 
-        j = i*LEN+i+1;
-        while (j < (i+1)*LEN+i+1) {
+        for (var j = i*LEN+i+1; j < (i+1)*LEN+i+1; j++) {
             var index = j - i*LEN - i;
             var ix = i*LEN+index-1;
             var iy = (index-1) * LEN + i;
 
             x[j] <== x[j-1] * solution[ix] / index;
             y[j] <== y[j-1] * solution[iy] / index;
-            j++;
         }
+
+        is_one[i] = IsEqual();
+        is_one[i].in[0] <== x[(i+1)*ACC-1];
+        is_one[i].in[1] <== 1;
+
+        is_one[LEN+i] = IsEqual();
+        is_one[LEN+i].in[0] <== y[(i+1)*ACC-1];
+        is_one[LEN+i].in[1] <== 1;
+
+        result += is_one[i].out + is_one[LEN+i].out;
     }
 
-    // Take every 5th element and add them together without using a for loop
-    var a = x[ACC-1] + x[2*ACC-1] + x[3*ACC-1] + x[4*ACC-1];
-    var b = y[ACC-1] + y[2*ACC-1] + y[3*ACC-1] + y[4*ACC-1];
-
-    out <== IsEqual()([a+b, LEN*2]);
+    out <== IsEqual()([result, LEN*2]);
 }
 
 
